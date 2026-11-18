@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09090d"><meta name="description" content="ARCADE X — play browser games and chase the leaderboard.">
+  <title>ARCADE X — Play beyond limits</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script defer src="{{ url_for('static', filename='js/games.js') }}"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">A</span> ARCADE<span class="brand-x">X</span></a>
+    <nav><a class="nav-link active" href="#games">Discover</a><a class="nav-link" href="#leaderboard">Leaderboard</a></nav>
+    <div class="top-actions"><span class="online-dot"></span><span class="online-label">ALL SYSTEMS ONLINE</span><button class="icon-button" id="themeButton" aria-label="Toggle theme">◐</button><button class="account-button" id="accountButton">SIGN IN</button></div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-copy"><div class="eyebrow"><span class="pulse"></span> YOUR NEXT HIGH SCORE STARTS HERE</div>
+        <h1>PLAY BEYOND<br><span>LIMITS.</span></h1><p class="hero-text">Quick games. Big challenges. One place to play.</p>
+        <a class="primary-button" href="#games">EXPLORE GAMES <span>↗</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="hero-core"><span>AX</span><small>ARCADE X</small></div><div class="float-chip chip-one">✦ LEVEL UP</div><div class="float-chip chip-two">04 GAMES</div></div>
+      <div class="hero-foot"><span>01 / THE ARCADE</span><span>SCROLL TO EXPLORE ↓</span></div>
+    </section>
+    <section class="games-section" id="games">
+      <div class="section-heading"><div><div class="eyebrow">PICK YOUR CHALLENGE</div><h2>THE <span>ARCADE</span></h2></div><div class="game-count"><strong id="gameCount">{{ games|length }}</strong><span> GAMES AVAILABLE</span></div></div>
+      <div class="toolbar"><label class="search-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Search games..." autocomplete="off"></label>
+        <div class="filters" role="group" aria-label="Filter games"><button class="filter active" data-filter="All">All games</button><button class="filter" data-filter="Arcade">Arcade</button><button class="filter" data-filter="Puzzle">Puzzle</button><button class="filter" data-filter="Strategy">Strategy</button><button class="filter" data-filter="Sports">Sports</button></div>
+      </div>
+      <div class="game-grid" id="gameGrid">
+        {% for game in games %}
+        <article class="game-card" data-id="{{ game.id }}" data-category="{{ game.category }}" data-name="{{ game.name|lower }}">
+          <div class="card-visual visual-{{ game.id }}"><span class="game-emoji">{{ game.icon }}</span><span class="card-tag">{{ game.category }}</span><button class="favorite" aria-label="Toggle favorite" data-favorite="{{ game.id }}">♡</button></div>
+          <div class="card-content"><div class="card-meta"><span>{{ game.difficulty }}</span><span>•</span><span>QUICK PLAY</span></div><h3>{{ game.name }}</h3><p>{{ game.description }}</p><button class="play-button" data-play="{{ game.id }}">PLAY NOW <span>→</span></button></div>
+        </article>{% endfor %}
+      </div><div class="empty-state hidden" id="emptyState">No games found. Try another search.</div>
+    </section>
+    <section class="leaderboard-section" id="leaderboard">
+      <div class="section-heading"><div><div class="eyebrow">CHASE THE TOP SPOT</div><h2>GLOBAL <span>LEADERBOARD</span></h2></div><div class="game-count">BEST SCORES</div></div>
+      <div class="leaderboard-panel"><div class="leaderboard-toolbar"><label for="leaderboardGame">GAME</label><select id="leaderboardGame"><option value="all">All games</option><option value="snake">Snake</option><option value="memory">Memory Match</option><option value="tictactoe">Tic-Tac-Toe</option><option value="ski">Alpine Rush</option></select><button class="secondary-button" id="refreshLeaderboard">↻ REFRESH</button></div>
+        <div class="leaderboard-head"><span>RANK</span><span>PLAYER</span><span>GAME</span><span>SCORE</span></div><div id="leaderboardRows"><div class="leaderboard-empty">Sign in and post a score to claim your place.</div></div>
+      </div>
+    </section>
+    <section class="stats-strip"><div><strong>04</strong><span>PLAYABLE GAMES</span></div><div><strong>∞</strong><span>WAYS TO PLAY</span></div><div><strong>01</strong><span>GLOBAL LEADERBOARD</span></div></section>
+  </main>
+  <footer><a class="brand" href="#"><span class="brand-mark">A</span> ARCADE<span class="brand-x">X</span></a><span>MADE FOR THE LOVE OF PLAY.</span><span>© 2026 ARCADE X</span></footer>
+
+  <div class="modal hidden" id="gameModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-panel"><div class="modal-header"><div><div class="eyebrow">NOW PLAYING</div><h2 id="modalTitle">GAME</h2></div><button class="close-button" id="closeModal" aria-label="Close game">×</button></div><div class="game-stage" id="gameStage"></div><div class="modal-footer"><span id="gameHelp">Choose a game to begin.</span><button class="secondary-button" id="restartGame">RESTART ↻</button></div></div></div>
+
+  <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><div class="auth-panel"><button class="close-button auth-close" id="closeAuth" aria-label="Close">×</button><div class="eyebrow">PLAYER PROFILE</div><h2 id="authTitle">WELCOME BACK</h2><p class="auth-subtitle">Sign in to save your scores and climb the leaderboard.</p>
+    <div class="auth-tabs"><button class="auth-tab active" data-auth-mode="login">SIGN IN</button><button class="auth-tab" data-auth-mode="register">CREATE ACCOUNT</button></div>
+    <form id="authForm"><label>USERNAME<input name="username" id="authUsername" minlength="3" maxlength="18" pattern="[A-Za-z0-9_]+" autocomplete="username" required placeholder="Your player name"></label><label>PASSWORD<input name="password" id="authPassword" type="password" minlength="8" maxlength="128" autocomplete="current-password" required placeholder="At least 8 characters"></label><button class="primary-button auth-submit" type="submit" id="authSubmit">SIGN IN <span>→</span></button></form><p class="auth-message" id="authMessage" role="status"></p>
+  </div></div>
+  <div class="toast" id="toast" role="status"></div>
+</body></html>
